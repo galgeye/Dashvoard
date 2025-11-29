@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- jsPDF libraries for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
     
@@ -55,7 +54,6 @@
 </head>
 <body>
 
-    <!-- --- REGION: NAVIGATION --- -->
     <nav class="bg-emerald-900 text-white p-4 sticky top-0 z-50 shadow-lg border-b-4 border-yellow-500">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div>
@@ -74,6 +72,7 @@
                 <button onclick="loadDemoData()" class="bg-emerald-800 hover:bg-emerald-700 px-4 py-2 rounded text-xs font-bold uppercase transition border border-emerald-600 text-yellow-50 shadow-sm">
                     Load Demo Data
                 </button>
+               
                 <label class="bg-yellow-600 hover:bg-yellow-500 px-4 py-2 rounded text-xs font-bold uppercase cursor-pointer transition shadow-lg text-white flex items-center gap-2 border border-yellow-700">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
                     Upload CSV
@@ -83,10 +82,8 @@
         </div>
     </nav>
 
-    <!-- MAIN CONTENT -->
     <main class="max-w-7xl mx-auto p-6 space-y-8 pb-24">
 
-        <!-- STATUS BAR -->
         <div class="bg-white p-4 rounded-xl shadow-sm border border-emerald-100 flex justify-between items-center">
             <div>
                 <h2 class="font-bold text-emerald-900">System Status</h2>
@@ -100,7 +97,6 @@
             </div>
         </div>
 
-        <!-- --- REGION: YEAR MATRICES --- -->
         <section>
             <h2 class="text-lg font-bold text-emerald-900 mb-4 flex items-center gap-2">
                 <span class="bg-yellow-500 w-1.5 h-6 rounded-full"></span>
@@ -113,7 +109,6 @@
             </div>
         </section>
 
-        <!-- --- REGION: HEATMAP & ON CALL --- -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <section id="heatmap-section" class="lg:col-span-1 hidden animate-fade-in">
                 <div class="flex justify-between items-end mb-4">
@@ -173,7 +168,6 @@
             </section>
         </div>
 
-        <!-- --- REGION: LOCKED REPORTING SECTION --- -->
         <section id="action-plan-section" class="bg-emerald-900 rounded-xl shadow-xl p-6 text-white animate-fade-in hidden relative overflow-hidden">
             <div id="locked-overlay" class="absolute inset-0 z-10 bg-emerald-900 bg-opacity-95 flex flex-col items-center justify-center p-6 text-center">
                 <svg class="w-12 h-12 text-yellow-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
@@ -199,11 +193,11 @@
                     <button onclick="generateSLTReport()" class="bg-purple-700 hover:bg-purple-600 text-white text-xs font-bold py-3 px-4 rounded shadow transition flex items-center gap-2 border border-purple-500">SLT Strategic Report</button>
                     <button onclick="exportActionTracker()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-3 px-4 rounded shadow transition flex items-center gap-2 border border-blue-400">Export Action Tracker (Excel)</button>
                     <button onclick="generateActionPDF()" class="bg-yellow-500 hover:bg-yellow-600 text-emerald-900 text-xs font-bold py-3 px-4 rounded shadow transition flex items-center gap-2">Form Actions PDF</button>
+                    <button onclick="generateStickerSheet()" class="bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold py-3 px-4 rounded shadow transition flex items-center gap-2 border border-orange-400">Generate Sticker Sheet</button>
                 </div>
             </div>
         </section>
 
-        <!-- --- REGION: STUDENT PROFILE --- -->
         <section id="student-focus" class="hidden animate-fade-in">
             <div class="bg-white rounded-xl shadow-xl border border-emerald-100 overflow-hidden">
                 <div class="bg-emerald-800 text-white p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center border-b-4 border-yellow-500 gap-4">
@@ -289,7 +283,6 @@
 
     </main>
 
-    <!-- --- REGION: MODAL --- -->
     <div id="detail-modal" class="fixed inset-0 z-50 hidden modal-backdrop flex justify-center items-center p-4">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
             <div class="bg-emerald-900 text-white p-5 flex justify-between items-center border-b-4 border-yellow-500">
@@ -309,14 +302,13 @@
 
     <script>
         // --- REGION: CONFIG & DATA ---
-        const apiKey = ""; 
+        const apiKey = "";
         let studentData = {};
         let onCallStats = { groups:{}, students:{}, subjects:{}, teachers:{} };
-        let heatmapData = {}; 
+        let heatmapData = {};
         let heatmapDrilldown = {}; 
         let chartInstance = null;
         let recentActiveDates = [];
-
         const STAFF_INITIALS_MAP = {
             "B JASTRZAB": "BJA", "L DOORLY": "LDO", "G BRIODY": "GBR", "I ABSHIR": "IAB", 
             "T SLAVOVA": "TSL", "E GALGEY": "EGA", "K KING": "KKI", "J NEVILLE": "JNE", 
@@ -325,7 +317,6 @@
             "S KISTEN": "SKI", "E BUDE": "EBU", "E TOPRAK": "ETO", "L TOWLER": "LTO", 
             "A SACKS": "ASA", "S KARA": "SKA"
         };
-
         function getStaffInitials(name) {
             if (!name) return "--";
             const upperName = name.toUpperCase();
@@ -365,14 +356,12 @@
                 "Monitor Attendance (Target: 100%)"
             ]
         };
-
         const DIAGNOSIS_MAP = {
             organisation: ['late', 'equipment', 'homework', 'uniform', 'planner', 'coat', 'jewellery', 'pe kit'],
             disruption:   ['chat', 'talk', 'noise', 'disrupt', 'shout', 'call out', 'task', 'distract', 'eating', 'mobile', 'poor attitude'],
             defiance:     ['defian', 'refus', 'rude', 'arguing', 'instruction', 'walk away', 'attitude', 'fail'],
             safety:       ['fight', 'phys', 'aggress', 'violent', 'danger', 'safe', 'on call', 'truan', 'abscond', 'bully']
         };
-        
         const STRATEGIES = {
             "Safety & Regulation": ["Immediate removal to safe space if escalated.", "Implement a 'Cool-off' card system.", "Risk assessment required for practical lessons.", "Seating plan: Keep near door/teacher desk.", "Restorative conversation post-event is critical."],
             "Respect & Cooperation": ["Avoid public confrontation; use corridor conversations.", "Give 'take up time' after instructions.", "Use 'Maybe... and...' language to de-escalate.", "Check for underlying unmet needs (hunger, tiredness).", "Positive phone call home for small wins."],
@@ -381,7 +370,6 @@
             "General Behaviour": ["Consistency with school policy.", "Build relationship through non-academic talk.", "Reinforce positive routines."],
             "SEN_ADD": ["Pre-teach key vocabulary.", "Use dual coding (visuals + text).", "Check understanding: 'Tell me what you need to do'."]
         };
-
         // --- REGION: LOGIC & PROCESSING ---
         
         function unlockReports() {
@@ -389,7 +377,6 @@
             const overlay = document.getElementById('locked-overlay');
             const content = document.getElementById('action-content');
             const error = document.getElementById('password-error');
-
             if (pass === "C7j77emc") { 
                 overlay.classList.add('hidden');
                 content.classList.remove('blur-sm');
@@ -406,7 +393,8 @@
             const dateText = new Date().toLocaleDateString();
 
             doc.setFillColor(6, 78, 59); doc.rect(0, 0, 210, 25, 'F');
-            doc.setTextColor(255); doc.setFontSize(20); doc.setFont(undefined, 'bold');
+            doc.setTextColor(255); doc.setFontSize(20);
+            doc.setFont(undefined, 'bold');
             doc.text("Weekly Staff Bulletin", 14, 17);
             doc.setFontSize(10); doc.text(dateText, 170, 17);
 
@@ -423,11 +411,9 @@
                     rec.forEach(i => yearStats[s.year].types[i.type] = (yearStats[s.year].types[i.type] || 0) + 1);
                 }
             });
-
             let y = 40;
             doc.setTextColor(0); doc.setFontSize(14); doc.text("1. Year Group Focus & Strategies", 14, y);
             y += 8;
-
             const yearRows = [];
             ["7", "8", "9", "10", "11"].forEach(yr => {
                 const stats = yearStats[yr];
@@ -443,7 +429,6 @@
                     ]);
                 }
             });
-
             doc.autoTable({
                 startY: y,
                 head: [['Year', 'Primary Issue', 'Suggested Strategy for Classrooms']],
@@ -465,7 +450,8 @@
             
             doc.setFontSize(14); doc.text("2. Hotspot Alert", 14, y);
             y += 8;
-            doc.setFontSize(11); doc.setFont(undefined, 'normal');
+            doc.setFontSize(11);
+            doc.setFont(undefined, 'normal');
             doc.text(`The busiest time this week was ${days[maxD]} Period ${maxP}.`, 14, y);
             doc.text(`Please ensure high visibility and meet-and-greet during this time.`, 14, y+6);
 
@@ -478,18 +464,15 @@
             
             doc.setFontSize(18); doc.text("SLT Strategic Behaviour Overview", 14, 20);
             doc.setFontSize(10); doc.text(`Generated: ${new Date().toLocaleDateString()}`, 14, 26);
-
             let y = 40;
 
             doc.setFontSize(14); doc.text("1. Key Students of Concern (Top 3 per Year)", 14, y);
             y += 8;
-
             const recentSet = new Set(recentActiveDates);
             const studentStats = Object.values(studentData).map(s => {
                 const recentIncidents = s.incidents.filter(i => recentSet.has(i.date.setHours(0,0,0,0)));
                 return { ...s, recentCount: recentIncidents.length };
             }).filter(s => s.recentCount > 0).sort((a,b) => b.recentCount - a.recentCount);
-
             const keyStudentRows = [];
             ["7", "8", "9", "10", "11"].forEach(yr => {
                 const top3 = studentStats.filter(s => s.year === yr).slice(0, 3);
@@ -510,12 +493,9 @@
 
             doc.setFontSize(14); doc.text("2. Hotspot Analysis: Key Classes & Staff", 14, y);
             y += 8;
-
             const topClasses = Object.entries(onCallStats.groups).sort((a,b) => b[1]-a[1]).slice(0, 5);
             const topStaff = Object.entries(onCallStats.teachers).sort((a,b) => b[1]-a[1]).slice(0, 5);
-
             const classRows = topClasses.map(([cls, count]) => [cls, count, "High On-Call/Removal Rate"]);
-            
             doc.autoTable({
                 startY: y,
                 head: [['Class/Group', 'On-Call Count', 'Concern Type']],
@@ -528,7 +508,6 @@
 
             doc.setFontSize(12); doc.text("Top Staff Requiring Support (Based on On-Calls)", 14, y);
             y += 6;
-            
             const staffRows = topStaff.map(([stf, count]) => [stf, count]);
              doc.autoTable({
                 startY: y,
@@ -538,7 +517,6 @@
                 headStyles: { fillColor: [75, 85, 99] }, // Gray
                 styles: { fontSize: 9 }
             });
-
             doc.save(`SLT_Report_${new Date().toISOString().split('T')[0]}.pdf`);
         }
 
@@ -551,17 +529,13 @@
             const dateStr = today.toLocaleDateString();
 
             csvRows.push(["Week_Num", "Date_Generated", "Role_Type", "Staff_Initials", "Student_Name", "Form", "Incident_Count", "Primary_Issue", "Suggested_Action", "Status", "Completion_Date", "Notes"]);
-
-            const sltLeads = { "7": "GBR", "8": "EGA", "9": "EGA", "10": "CMA", "11": "SKI", "12": "CMA", "13": "CMA" }; 
-
+            const sltLeads = { "7": "GBR", "8": "EGA", "9": "EGA", "10": "CMA", "11": "SKI", "12": "CMA", "13": "CMA" };
             studentStats.slice(0, 5).forEach(s => {
                 assignedStudents.add(s.name);
                 const staffInit = sltLeads[s.year] || "SLT";
                 csvRows.push([weekNum, dateStr, "Assistant Head", staffInit, s.name, s.reg, s.recentCount, s.topIssue, "Review Exclusion Risk", "Pending", "", ""]);
             });
-
-            const hoyLeads = { "7": "BJA", "8": "EGA", "9": "GBR", "10": "UKA", "11": "SKI", "12": "CMA", "13": "CMA" }; 
-
+            const hoyLeads = { "7": "BJA", "8": "EGA", "9": "GBR", "10": "UKA", "11": "SKI", "12": "CMA", "13": "CMA" };
             const years = ["7", "8", "9", "10", "11"];
             years.forEach(y => {
                 const yearStudents = studentStats.filter(s => s.year === y && s.recentCount > 5 && !assignedStudents.has(s.name)).slice(0, 3);
@@ -571,7 +545,6 @@
                     csvRows.push([weekNum, dateStr, "Head of Year", staffInit, s.name, s.reg, s.recentCount, s.topIssue, `Red Report - Focus: ${suggestTarget(s.issueCat)}`, "Pending", "", ""]);
                 });
             });
-
             const forms = [...new Set(studentStats.map(s => s.reg))].sort();
             forms.forEach(f => {
                 const students = studentStats.filter(s => s.reg === f && s.recentCount > 2 && !assignedStudents.has(s.name)).slice(0, 3);
@@ -590,7 +563,6 @@
                     csvRows.push([weekNum, dateStr, "Form Tutor", tutorInit, s.name, s.reg, s.recentCount, s.topIssue, `Green Report - Focus: ${suggestTarget(s.issueCat)}`, "Pending", "", ""]);
                 });
             });
-
             const csvContent = "data:text/csv;charset=utf-8," + csvRows.map(e => e.join(",")).join("\n");
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
@@ -630,7 +602,6 @@
                 }
                 
                 const issueCat = diagnose(topIssue);
-
                 return { ...s, recentCount: recentIncidents.length, topIssue, issueCat };
             }).filter(s => s !== null).sort((a,b) => b.recentCount - a.recentCount);
         }
@@ -639,15 +610,13 @@
             if (!window.jspdf) { alert("PDF library not loaded."); return; }
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-            const dateRangeText = recentActiveDates.length > 0 ? 
+            const dateRangeText = recentActiveDates.length > 0 ?
                 `${new Date(recentActiveDates[recentActiveDates.length-1]).toLocaleDateString()} - ${new Date(recentActiveDates[0]).toLocaleDateString()}` : 
                 "All Time";
-
             const studentStats = getStudentStatsForActions(); 
             const assignedStudents = new Set();
             const top5School = studentStats.slice(0, 5);
             top5School.forEach(s => assignedStudents.add(s.name));
-            
             const years = ["7", "8", "9", "10", "11"];
             const topPerYear = {};
             years.forEach(y => {
@@ -658,15 +627,14 @@
                 topPerYear[y] = yearStudents;
                 yearStudents.forEach(s => assignedStudents.add(s.name)); 
             });
-
             const forms = [...new Set(studentStats.map(s => s.reg))].sort();
             const formActions = forms.map(f => {
                 const students = studentStats
                     .filter(s => s.reg === f && s.recentCount > 2 && !assignedStudents.has(s.name)) 
                     .slice(0, 3); 
+                
                 return { form: f, students };
             }).filter(fa => fa.students.length > 0);
-
             let y = 20;
 
             doc.setFontSize(18); doc.setTextColor(6, 78, 59);
@@ -675,7 +643,8 @@
             doc.text(`Generated: ${new Date().toLocaleDateString()} | Data Range: ${dateRangeText}`, 14, y + 6);
             y += 15;
 
-            doc.setFillColor(6, 78, 59); doc.rect(14, y, 182, 8, 'F');
+            doc.setFillColor(6, 78, 59);
+            doc.rect(14, y, 182, 8, 'F');
             doc.setTextColor(255); doc.setFontSize(12); doc.setFont(undefined, 'bold');
             doc.text("Assistant Head Actions (Top 5 School-Wide Concerns)", 16, y + 5.5);
             y += 10;
@@ -718,7 +687,6 @@
             doc.setTextColor(255); doc.setFontSize(12); doc.setFont(undefined, 'bold');
             doc.text("Form Tutor Actions (Top 3 > 2 Events - Excluding Red Forms)", 16, y + 5.5);
             y += 12;
-
             const tutorData = [];
             formActions.forEach(fa => {
                 fa.students.forEach(s => {
@@ -728,7 +696,6 @@
                     ]);
                 });
             });
-
             doc.autoTable({
                 startY: y, head: [['Form', 'Student', 'Events', 'Tutor Action']],
                 body: tutorData, theme: 'plain', 
@@ -736,8 +703,129 @@
                 columnStyles: { 0: {fontStyle: 'bold'} },
                 styles: {fontSize: 9, cellPadding: 1.5}
             });
-
             doc.save(`Pastoral_Action_Plan_${new Date().toISOString().split('T')[0]}.pdf`);
+        }
+
+        // --- NEW FUNCTION: GENERATE STICKERS ---
+        function generateStickerSheet() {
+            if (!window.jspdf) { alert("PDF library not loaded."); return; }
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // 1. Gather Population (Copy logic from generateActionPDF to ensure match)
+            const studentStats = getStudentStatsForActions();
+            const stickersToPrint = [];
+            const assignedStudents = new Set();
+
+            // SLT (Top 5)
+            studentStats.slice(0, 5).forEach(s => {
+                stickersToPrint.push(s);
+                assignedStudents.add(s.name);
+            });
+
+            // HOY (Top 3 per year > 5 events)
+            const years = ["7", "8", "9", "10", "11"];
+            years.forEach(y => {
+                const yearStudents = studentStats.filter(s => s.year === y && s.recentCount > 5 && !assignedStudents.has(s.name)).slice(0, 3);
+                yearStudents.forEach(s => {
+                    stickersToPrint.push(s);
+                    assignedStudents.add(s.name);
+                });
+            });
+
+            // Form Tutor (Top 3 per form > 2 events)
+            const forms = [...new Set(studentStats.map(s => s.reg))].sort();
+            forms.forEach(f => {
+                const students = studentStats.filter(s => s.reg === f && s.recentCount > 2 && !assignedStudents.has(s.name)).slice(0, 3);
+                students.forEach(s => {
+                    stickersToPrint.push(s);
+                    assignedStudents.add(s.name);
+                });
+            });
+
+            if (stickersToPrint.length === 0) { alert("No students meet the criteria for stickers based on current data."); return; }
+
+            // 2. Generate PDF Grid (2x7 layout - standard label sheet 14 per page)
+            const startX = 10;
+            const startY = 15;
+            const cardWidth = 90;
+            const cardHeight = 38;
+            const gapX = 5;
+            const gapY = 2;
+
+            let x = startX;
+            let y = startY;
+            let col = 0;
+            let row = 0;
+
+            doc.setFontSize(10);
+
+            stickersToPrint.forEach((s, index) => {
+                // Page break check (14 stickers per page)
+                if (index > 0 && index % 14 === 0) {
+                    doc.addPage();
+                    col = 0; row = 0;
+                    x = startX; y = startY;
+                }
+
+                // Calc Position
+                x = startX + (col * (cardWidth + gapX));
+                y = startY + (row * (cardHeight + gapY));
+
+                // Optional Border for visual guide
+                doc.setDrawColor(220);
+                doc.rect(x, y, cardWidth, cardHeight);
+
+                // Content
+                // Header: Name & Year
+                doc.setTextColor(0);
+                doc.setFont(undefined, 'bold');
+                doc.setFontSize(11);
+                doc.text(`${s.name} (Yr ${s.year})`, x + 2, y + 6);
+
+                let currentY = y + 11;
+                
+                // SEN Status (if exists)
+                if (s.isSEN) {
+                    doc.setFontSize(8);
+                    doc.setTextColor(100); 
+                    doc.setFont(undefined, 'bold');
+                    doc.text(`SEN: ${s.senStatus || 'Yes'}`, x + 2, currentY);
+                    currentY += 5;
+                }
+
+                // Target 1
+                doc.setFont(undefined, 'bold');
+                doc.setTextColor(6, 78, 59); // Emerald brand color
+                doc.setFontSize(9);
+                doc.text("Target 1 (Behaviour):", x + 2, currentY);
+                doc.setFont(undefined, 'normal');
+                doc.setTextColor(0);
+                // Adjust X for the label to prevent overlap
+                doc.text(suggestTarget(s.issueCat), x + 35, currentY); 
+
+                // Target 2
+                currentY += 6;
+                doc.setFont(undefined, 'bold');
+                doc.setTextColor(217, 119, 6); // Amber/Gold brand color
+                doc.text("Target 2 (Effort):", x + 2, currentY);
+                doc.setFont(undefined, 'normal');
+                doc.setTextColor(0);
+                
+                // Hardcoded Target text wrap
+                const target2 = "Complete ALL homework and classwork to the highest standard.";
+                const splitText = doc.splitTextToSize(target2, 85); 
+                doc.text(splitText, x + 2, currentY + 4);
+
+                // Iterate Grid
+                col++;
+                if (col >= 2) {
+                    col = 0;
+                    row++;
+                }
+            });
+
+            doc.save(`Student_Targets_Stickers_${new Date().toISOString().split('T')[0]}.pdf`);
         }
 
         function suggestTarget(category) {
@@ -757,7 +845,7 @@
                 return new Date(parts[2], parts[1] - 1, parts[0]);
             }
             if (dateStr.includes('/')) {
-                const parts = dateStr.split(/[\/\sT]/); 
+                const parts = dateStr.split(/[\/\sT]/);
                 if (parts.length >= 3) {
                     const day = parseInt(parts[0], 10);
                     const month = parseInt(parts[1], 10);
@@ -772,20 +860,19 @@
             const dt = new Date(d);
             return isNaN(dt) ? new Date() : dt;
         };
-
         const getPeriodFromTime = (timeStr) => {
-            if (!timeStr) return 0; 
+            if (!timeStr) return 0;
             const parts = timeStr.split(':');
             if (parts.length < 2) return 0;
             const hour = parseInt(parts[0], 10);
             const minute = parseInt(parts[1], 10);
             const timeVal = hour + (minute / 60);
             if (timeVal < 9.75) return 1; 
-            if (timeVal < 10.75) return 2; 
+            if (timeVal < 10.75) return 2;
             if (timeVal < 12.0) return 3;  
             if (timeVal < 13.0) return 4;  
             if (timeVal < 14.5) return 5;  
-            return 6;                      
+            return 6;
         };
 
         const diagnose = (str) => {
@@ -797,7 +884,6 @@
             if(DIAGNOSIS_MAP.organisation.some(k => s.includes(k))) return "Organisation";
             return "General Behaviour";
         };
-        
         const getDiagClass = (d) => {
             if(d.includes("Safety")) return "diag-saf";
             if(d.includes("Respect")) return "diag-def";
@@ -805,7 +891,6 @@
             if(d.includes("Organisation")) return "diag-org";
             return "diag-gen";
         };
-
         const getHeatmapColor = (count) => {
             if (!count || count === 0) return 'bg-slate-50 text-slate-300';
             if (count < 3) return 'bg-red-50 text-red-800';
@@ -814,7 +899,6 @@
             if (count < 15) return 'bg-red-600 text-white';
             return 'bg-red-900 text-white';
         };
-
         // ================= DATA PROCESSING =================
         document.getElementById('file-input').addEventListener('change', (e) => {
             const file = e.target.files[0];
@@ -822,15 +906,12 @@
             document.getElementById('status-msg').innerHTML = `<span class="animate-pulse text-emerald-600">Processing ${file.name}...</span>`;
             Papa.parse(file, { header: true, skipEmptyLines: true, complete: (res) => processData(res.data) });
         });
-        
         function loadDemoData() {
             document.getElementById('status-msg').innerHTML = `<span class="animate-pulse text-emerald-600">Generating Demo Data...</span>`;
-            
             const names = ["James Smith", "Sarah Jones", "Abdus Samad Sarwar", "Adam Ammar Khodja", "Mohammed Ali", "Chen Wei", "Jessica Taylor", "Thomas Brown", "Olivia Wilson"];
             const types = ["Disruptive Behaviour", "Defiance", "No Homework", "Late", "On Call - Refusal", "Physical Aggression", "Truancy", "Equipment Missing", "General (Form Time Detention)"];
             const subjects = ["Maths", "English", "Science", "Geography", "History", "PE", "Art", "Drama"];
             const forms = ["7A", "7B", "8A", "9C", "10D", "11A"];
-            
             const demoData = [];
             const today = new Date();
             for(let i=0; i<250; i++) {
@@ -871,7 +952,6 @@
                 heatmapData[p] = {1:0, 2:0, 3:0, 4:0, 5:0}; 
                 heatmapDrilldown[p] = { 1: {}, 2: {}, 3: {}, 4: {}, 5: {} };
             });
-
             const get = (row, keys) => {
                 if (!keys) return "";
                 if (Array.isArray(keys)) {
@@ -899,7 +979,6 @@
 
             let totalEvents = 0;
             let allValidDates = new Set();
-
             // 1. Date Pass
             rows.forEach(row => {
                 if (isIgnored(row)) return; 
@@ -920,7 +999,7 @@
                 let fname = get(row, ["firstName", "forename"]);
                 let lname = get(row, ["lastName", "surname"]);
                 let name = (fname && lname) ? `${fname} ${lname}` : get(row, ["student name", "name"]);
-                
+                 
                 if(!name || name.length < 2) return;
 
                 let year = (get(row, ["studentYearGroup", "year"]) || "Unknown").toString().replace(/Year\s*/i, '').trim();
@@ -938,17 +1017,15 @@
                 let dStr = get(row, ["whenDate", "date", "createdDate"]);
                 let d = parseDate(dStr);
                 if(!d) d = new Date();
-
                 // Heatmap Logic
                 if (recentActiveDatesSet.has(d.setHours(0,0,0,0))) {
-                     const day = new Date(d).getDay(); 
+                     const day = new Date(d).getDay();
                      let timeStr = get(row, ["whenTime", "time"]);
                      if (!timeStr) {
                          const cd = get(row, ["createdDate"]);
                          if (cd && cd.match(/\d{1,2}:\d{2}/)) timeStr = cd.match(/\d{1,2}:\d{2}/)[0];
                      }
                      const period = getPeriodFromTime(timeStr);
-
                      if (day >= 1 && day <= 5 && period >= 1 && period <= 6) {
                          heatmapData[period][day]++;
                          if (!heatmapDrilldown[period][day][year]) heatmapDrilldown[period][day][year] = {};
@@ -964,7 +1041,6 @@
                 let isPP = (pp && (String(pp).toUpperCase() === "TRUE" || pp === "1" || String(pp).toUpperCase() === "YES"));
                 let ra = get(row, ["Reading age", "reading age"]);
                 let pa = get(row, ["Prior Attainment (KS2)", "Prior Attainment"]);
-
                 if(!studentData[name]) {
                     studentData[name] = { name, year, reg, count:0, isSEN, senStatus: sen || "N", isPP, ra: ra || "--", pa: pa || "--", types:{}, subjects:{}, incidents:[], notes:[] };
                 }
@@ -980,7 +1056,6 @@
                     teacher: teacher,
                     notes: comments 
                 });
-                
                 if(comments) studentData[name].notes.push(comments);
 
                 // On Call Stats
@@ -993,7 +1068,6 @@
                 }
                 totalEvents++;
             });
-
             document.getElementById('total-incidents').innerText = totalEvents;
             document.getElementById('status-msg').innerText = "Analysis Complete";
             
@@ -1105,13 +1179,11 @@
             document.getElementById('focus-pa').innerText = s.pa;
             document.getElementById('focus-sen-detail').innerText = s.senStatus;
             document.getElementById('focus-pp-detail').innerText = s.isPP ? "Yes" : "No";
-
             // Badges
             const badgeContainer = document.getElementById('focus-badges');
             badgeContainer.innerHTML = "";
             if(s.isSEN) badgeContainer.innerHTML += `<span class="tag tag-sen">SEN</span>`;
             if(s.isPP) badgeContainer.innerHTML += `<span class="tag tag-pp">Pupil Premium</span>`;
-            
             // Diagnosis
             const sortedIssues = Object.entries(s.types).sort((a,b)=>b[1]-a[1]);
             let topIssue = sortedIssues[0]?.[0] || "General";
@@ -1119,22 +1191,23 @@
             if (diag === "General Behaviour" && sortedIssues.length > 1) {
                 const secondIssue = sortedIssues[1][0];
                 const secondDiag = diagnose(secondIssue);
-                if (secondDiag !== "General Behaviour") { topIssue = secondIssue; diag = secondDiag; }
+                if (secondDiag !== "General Behaviour") { topIssue = secondIssue; diag = secondDiag;
+                }
             }
             const diagEl = document.getElementById('focus-diagnosis');
             diagEl.innerText = diag;
             diagEl.className = `${getDiagClass(diag)} px-3 py-1 rounded text-xs font-bold uppercase`;
-
             // Subject
             const ignoredSubjects = ["General", "Registration", "Tutor", "Form"];
             const subjectEntries = Object.entries(s.subjects).filter(([k, v]) => !ignoredSubjects.includes(k)).sort((a,b) => b[1]-a[1]);
             let subjDisplay = "N/A";
             if (subjectEntries.length > 0) {
-                if (subjectEntries[0][1] > 10) { subjDisplay = subjectEntries.slice(0, 3).map(e => `${e[0]} (${e[1]})`).join(", "); } 
-                else { subjDisplay = subjectEntries[0][0]; }
+                if (subjectEntries[0][1] > 10) { subjDisplay = subjectEntries.slice(0, 3).map(e => `${e[0]} (${e[1]})`).join(", ");
+                } 
+                else { subjDisplay = subjectEntries[0][0];
+                }
             }
             document.getElementById('focus-dept').innerText = subjDisplay;
-
             // Strategies
             const specificStrategies = SEN_PROVISIONS_DB[s.name] || [];
             renderStrategies(diag, s.isSEN, specificStrategies);
@@ -1145,8 +1218,10 @@
             const foundKeys = keywords.filter(k => allNotes.includes(k));
             const analysisEl = document.getElementById('comment-analysis');
             if(s.notes.length > 0) {
-                analysisEl.innerHTML = `<strong>Recent Logs:</strong> "${s.notes.slice(0,2).join('", "')}..."<br><br><strong>Recurring themes:</strong> ${foundKeys.length > 0 ? foundKeys.join(", ") : "General disruption"}`;
-            } else { analysisEl.innerText = "No qualitative data logged."; }
+                analysisEl.innerHTML = `<strong>Recent Logs:</strong> "${s.notes.slice(0,2).join('", "')}..."<br><br><strong>Recurring themes:</strong> ${foundKeys.length > 0 ?
+                foundKeys.join(", ") : "General disruption"}`;
+            } else { analysisEl.innerText = "No qualitative data logged.";
+            }
             renderChart(s.incidents);
         }
 
@@ -1158,7 +1233,7 @@
             classContainer.innerHTML = html;
             let senHtml = "";
             if (specificStrategies && specificStrategies.length > 0) {
-                senHeader.innerText = "Strategies from SEN Passport"; 
+                senHeader.innerText = "Strategies from SEN Passport";
                 senHeader.className = "text-xs font-bold text-blue-700 uppercase mb-3 border-b border-blue-100 pb-1";
                 senHtml += specificStrategies.map(st => `<div class="strat-card border-l-4 border-blue-500 bg-blue-50"><span class="text-blue-600 font-bold text-lg leading-none mr-2">&#10003;</span><span>${st}</span></div>`).join('');
             } else if (isSEN) {
@@ -1181,7 +1256,8 @@
             chartInstance = new Chart(ctx, { type: 'bar', data: { labels: Object.keys(months), datasets: [{ label: 'Incidents', data: Object.values(months), backgroundColor: '#064e3b', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { display: false } }, x: { grid: { display: false } } } } });
         }
 
-        function closeProfile() { document.getElementById('student-focus').classList.add('hidden'); }
+        function closeProfile() { document.getElementById('student-focus').classList.add('hidden');
+        }
 
         function openModal(year) {
             const modal = document.getElementById('detail-modal');
@@ -1206,7 +1282,8 @@
             analysisData.sort((a,b) => b.totalEvents - a.totalEvents);
             const container = document.getElementById('modal-content-container');
             let html = `<div class="mb-4 text-xs text-slate-500 font-mono">Active Dates: ${dateList}</div><div class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden"><table class="min-w-full text-sm"><thead class="bg-red-50 border-b border-red-100 text-red-900 uppercase text-xs font-bold"><tr><th class="px-6 py-3 text-left">Student Name</th><th class="px-6 py-3 text-left">Primary Issue</th><th class="px-6 py-3 text-center">Total Events</th><th class="px-6 py-3 text-center">On Call, count</th><th class="px-6 py-3 text-center">Physical Altercation, count</th><th class="px-6 py-3 text-center">Decision</th></tr></thead><tbody class="divide-y divide-slate-100">`;
-            if(analysisData.length === 0) { html += `<tr><td colspan="6" class="px-6 py-4 text-center text-slate-400 italic">No data found.</td></tr>`; } else {
+            if(analysisData.length === 0) { html += `<tr><td colspan="6" class="px-6 py-4 text-center text-slate-400 italic">No data found.</td></tr>`;
+            } else {
                 analysisData.slice(0, 50).forEach((data, index) => {
                     const isTop5 = index < 5;
                     const decisionClass = isTop5 
@@ -1229,7 +1306,6 @@
             const modal = document.getElementById('detail-modal');
             document.getElementById('modal-title').innerText = `Incident Log: ${s.name}`;
             document.getElementById('modal-subtitle').innerText = `Raw data verification for ${s.count} incidents`;
-
             const sortedIncidents = [...s.incidents].sort((a,b) => b.date - a.date);
 
             // Table of raw events
@@ -1269,7 +1345,6 @@
             const modal = document.getElementById('detail-modal');
             document.getElementById('modal-title').innerText = `Data Drill-Down: ${key}`;
             document.getElementById('modal-subtitle').innerText = `Verifying specific incidents for category: ${category}`;
-
             // Filter ALL incidents to find matches
             const matches = [];
             Object.values(studentData).forEach(s => {
@@ -1300,7 +1375,6 @@
                     <td class="px-4 py-2">${m.teacher}</td>
                 </tr>
             `).join('');
-
             const container = document.getElementById('modal-content-container');
             container.innerHTML = `
                 <div class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden max-h-[60vh] overflow-y-auto">
@@ -1313,11 +1387,11 @@
                                 <th class="px-4 py-2">Teacher</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-100">${rows || '<tr><td colspan="4" class="p-4 text-center text-slate-400">No direct matches found in raw data.</td></tr>'}</tbody>
+                        <tbody class="divide-y divide-slate-100">${rows ||
+'<tr><td colspan="4" class="p-4 text-center text-slate-400">No direct matches found in raw data.</td></tr>'}</tbody>
                     </table>
                 </div>
             `;
-            
             modal.classList.remove('hidden');
         }
 
